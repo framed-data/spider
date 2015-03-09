@@ -1,4 +1,4 @@
-(defproject spider "0.1.0"
+(defproject io.framed/spider "0.1.0"
   :description "A tiny set of web utilities on top of Ring"
   :url "https://github.com/framed-data/spider"
   :license {:name "MIT License"
