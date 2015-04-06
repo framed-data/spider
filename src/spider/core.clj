@@ -47,9 +47,24 @@
      :subtype subtype
      :parameter parameter}))
 
+(defn strip-params [media-type-str]
+  (let [{:keys [type subtype]} (parse-media-type media-type-str)]
+    (str type "/" subtype)))
+
+(defn find-match
+  "All content-type strings will be matched using just the type and subtype
+  parts. Other parameters will be ignored in both the `ct-map` and the
+  content-type header."
+  [ct-map content-type]
+  (let [content-type' (strip-params content-type)]
+    (some
+      (fn [[ct handler]]
+        (when (= content-type' (strip-params ct)) handler))
+      ct-map)))
+
 (defn content-type-dispatcher
   "Construct a handler function that will dispatch to one of several
-   sub-handlers depending on the Content-Type of the request
+   sub-handlers depending on the Content-Type of the request.
 
    Ex:
      (def my-endpoint
@@ -70,14 +85,8 @@
         (response/unsupported-type preferred-type)]
     (fn [request]
       (let [accept (get-in request [:headers "content-type"])
-            parse
-            (fn [media-type-str]
-              (let [{:keys [type subtype]} (parse-media-type media-type-str)]
-                  (str type "/" subtype)))
-
-            primary-accept (-> accept (string/split #",") first parse)
-
-            primary-match (ct-map primary-accept)
+            primary-accept (-> accept (string/split #",") first)
+            primary-match (find-match ct-map primary-accept)
             else-handler (ct-map :else)
             default-handler (fn [_] unsupported-type-response)]
         ((or primary-match else-handler default-handler) request)))))
