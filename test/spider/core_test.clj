@@ -18,12 +18,19 @@
 (deftest test-accept-dispatcher
   (let [dispatcher
         (spider/accept-dispatcher {"text/html" (constantly :html)}
-                                   (constantly :default))]
+                                  (constantly :default))]
     (is (= :html (dispatcher {:headers {"accept" "text/html"}})))
     (is (= :html (dispatcher {:headers {"accept" "text/html,text/plain"}})))
     (is (= :default (dispatcher {:headers {"accept" "text/plain,text/html"}})))
     (is (= :default (dispatcher {:headers {}})))
-    (is (= :default (dispatcher {:headers {"accept" ""}})))))
+    (is (= :default (dispatcher {:headers {"accept" ""}}))))
+  (testing "with charset dispatcher"
+    (let [dispatcher
+          (spider/accept-dispatcher {"application/edn;charset=utf-8" (constantly :edn)}
+                                    (constantly :default))]
+      (is (= :edn (dispatcher {:headers {"accept" "application/edn"}})))
+      (is (= :edn (dispatcher {:headers {"accept" "application/edn;charset=utf-8"}})))
+      (is (= :default (dispatcher {:headers {}}))))))
 
 (deftest test-content-type-dispatcher
   (let [->request (fn [content-type] {:headers {"content-type" content-type}})]
