@@ -24,3 +24,18 @@
     (is (= :default (dispatcher {:headers {"accept" "text/plain,text/html"}})))
     (is (= :default (dispatcher {:headers {}})))
     (is (= :default (dispatcher {:headers {"accept" ""}})))))
+
+(deftest test-content-type-dispatcher
+  (let [->request (fn [content-type] {:headers {"content-type" content-type}})]
+    (let [dispatcher
+          (spider/content-type-dispatcher {"application/edn" (fn [_] "correct")})
+
+          bad-response (dispatcher (->request "text/foo"))]
+      (is (= "correct" (dispatcher (->request "application/edn"))))
+      (is (= "correct" (dispatcher (->request "application/edn;charset=utf-8"))))
+      (is (= 415 (:status bad-response))))
+    (testing "with charset dispatcher"
+      (let [dispatcher
+            (spider/content-type-dispatcher {"application/edn;charset=utf-8" (fn [_] "correct")})]
+        (is (= "correct" (dispatcher (->request "application/edn"))))
+        (is (= "correct" (dispatcher (->request "application/edn;charset=utf-8"))))))))

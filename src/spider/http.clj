@@ -1,7 +1,7 @@
 (ns spider.http)
 
-(def edn "application/edn")
-(def json "application/json")
-(def html "text/html")
-(def plain "text/plain")
-(def form-encoded "application/x-www-form-urlencoded")
+(def edn "application/edn;charset=utf-8")
+(def json "application/json;charset=utf-8")
+(def html "text/html;charset=utf-8")
+(def plain "text/plain;charset=utf-8")
+(def form-encoded "application/x-www-form-urlencoded;charset=utf-8")
