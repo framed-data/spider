@@ -12,24 +12,6 @@
 (def plain http/plain)
 (def form-encoded http/form-encoded)
 
-(defn accept-dispatcher
-  "Construct a handler function that will dispatch to one of several
-   sub-handlers depending on the Accept header of the request
-
-  (def my-endpoint
-    (accept-dispatcher
-      {\"application/edn\" (fn [request] ...)}
-      my-not-acceptable-handler))"
-  [ct-map default-handler]
-  (fn [request]
-    (if-let [handler
-             (some-> (get-in request [:headers "accept"])
-                     (string/split #",")
-                     first
-                     ct-map)]
-      (handler request)
-      (default-handler request))))
-
 (defn parse-media-type
   "See RFC 2616 section 3.7 Media Types
 
@@ -61,6 +43,26 @@
       (fn [[ct handler]]
         (when (= content-type' (strip-params ct)) handler))
       ct-map)))
+
+(defn accept-dispatcher
+  "Construct a handler function that will dispatch to one of several
+   sub-handlers depending on the Accept header of the request
+
+  (def my-endpoint
+    (accept-dispatcher
+      {\"application/edn\" (fn [request] ...)}
+      my-not-acceptable-handler))"
+  [ct-map default-handler]
+  (fn [request]
+    (let [primary-accept
+          (-> (get-in request [:headers "accept"])
+              (or "")
+              (string/split #",")
+              first)
+          handler (find-match ct-map primary-accept)]
+      (if handler
+        (handler request)
+        (default-handler request)))))
 
 (defn content-type-dispatcher
   "Construct a handler function that will dispatch to one of several
