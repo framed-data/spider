@@ -14,7 +14,7 @@
   (let [r1 {:body (->reader "{\"hello\":\"world\"}")}
         r2 {:body (->reader "{\"hello\"}")}] ; Invalid JSON
     (is (= {"hello" "world"} (request/read-json-body r1)))
-    (is (= nil (request/read-edn-body r2)))))
+    (is (= nil (request/read-json-body r2)))))
 
 (deftest test-read-edn-body
   (let [r1 {:body (->reader "{:hello \"world\"}")}

@@ -1,6 +1,5 @@
 (ns spider.request
   (:require [clojure.edn :as edn]
-            [clojure.java.io :as io]
             [clojure.string :as string]
             [clojure.walk :as walk]
             [clj-json.core :as json]
@@ -24,13 +23,10 @@
   (->> (:form-params request)
        (walk/keywordize-keys)))
 
-(defn- slurp-body [request]
-  (slurp (io/reader (:body request))))
-
 (defn read-json-body [request]
-  (try (json/parse-string (slurp-body request))
+  (try (json/parse-string (slurp (:body request)))
        (catch Exception ex nil)))
 
 (defn read-edn-body [request]
-  (try (edn/read-string (slurp-body request))
+  (try (edn/read-string (slurp (:body request)))
        (catch Exception ex nil)))
