@@ -24,9 +24,7 @@
        (walk/keywordize-keys)))
 
 (defn read-json-body [request]
-  (try (json/parse-string (slurp (:body request)))
-       (catch Exception ex nil)))
+  (json/parse-string (slurp (:body request))))
 
 (defn read-edn-body [request]
-  (try (edn/read-string (slurp (:body request)))
-       (catch Exception ex nil)))
+  (edn/read-string (slurp (:body request))))
