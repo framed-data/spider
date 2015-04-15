@@ -1,8 +1,8 @@
 (ns spider.request
   (:require [clojure.edn :as edn]
-            [clojure.java.io :as io]
             [clojure.string :as string]
             [clojure.walk :as walk]
+            [clj-json.core :as json]
             [ring.util.codec]))
 
 (defn uri-parts
@@ -23,9 +23,8 @@
   (->> (:form-params request)
        (walk/keywordize-keys)))
 
+(defn read-json-body [request]
+  (json/parse-string (slurp (:body request))))
+
 (defn read-edn-body [request]
-  (let [s (->> (:body request)
-               io/reader
-               slurp)]
-    (try (edn/read-string s)
-         (catch Exception ex nil))))
+  (edn/read-string (slurp (:body request))))
