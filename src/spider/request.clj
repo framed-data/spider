@@ -3,6 +3,7 @@
             [clojure.java.io :as io]
             [clojure.string :as string]
             [clojure.walk :as walk]
+            [clj-json.core :as json]
             [ring.util.codec]))
 
 (defn uri-parts
@@ -23,9 +24,13 @@
   (->> (:form-params request)
        (walk/keywordize-keys)))
 
+(defn- slurp-body [request]
+  (slurp (io/reader (:body request))))
+
+(defn read-json-body [request]
+  (try (json/parse-string (slurp-body request))
+       (catch Exception ex nil)))
+
 (defn read-edn-body [request]
-  (let [s (->> (:body request)
-               io/reader
-               slurp)]
-    (try (edn/read-string s)
-         (catch Exception ex nil))))
+  (try (edn/read-string (slurp-body request))
+       (catch Exception ex nil)))
