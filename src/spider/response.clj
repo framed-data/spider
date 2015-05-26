@@ -49,6 +49,8 @@
 
 (defresponse not-authorized 401 "HTTP 401: Not Authorized")
 
+(defresponse forbidden 403 "HTTP 403: Forbidden")
+
 (defresponse not-found 404 "HTTP 404: Not Found")
 
 (defresponse not-allowed 405 "HTTP 405: Method Not Allowed")
@@ -58,6 +60,8 @@
    :headers {"Content-Type" http/plain}
    :body (str "HTTP 406: Not Acceptable; use " acceptable-type)})
 
+(defresponse request-timeout 408 "HTTP 408: Request Timeout")
+
 (defn unsupported-type [preferred-type]
   {:status 415
    :headers {"Content-Type" http/plain}
@@ -66,3 +70,13 @@
                 (str " Prefer " preferred-type)))})
 
 (defresponse unprocessable 422 "HTTP 422: Unprocessable Entity")
+
+(defresponse internal-server-error 500 "HTTP 500: Internal Server Error")
+
+(defresponse not-implemented 501 "HTTP 501: Not Implemented")
+
+(defresponse bad-gateway 502 "HTTP 502: Bad Gateway")
+
+(defresponse bad-gateway 503 "HTTP 503: Service Unavailable")
+
+(defresponse bad-gateway 504 "HTTP 504: Gateway Timeout")
