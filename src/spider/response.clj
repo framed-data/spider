@@ -77,6 +77,6 @@
 
 (defresponse bad-gateway 502 "HTTP 502: Bad Gateway")
 
-(defresponse bad-gateway 503 "HTTP 503: Service Unavailable")
+(defresponse service-unavailable 503 "HTTP 503: Service Unavailable")
 
-(defresponse bad-gateway 504 "HTTP 504: Gateway Timeout")
+(defresponse gateway-timeout 504 "HTTP 504: Gateway Timeout")
