@@ -1,4 +1,4 @@
-(ns spider.http)
+(ns ^:no-doc spider.http)
 
 (def edn "application/edn;charset=utf-8")
 (def json "application/json;charset=utf-8")
