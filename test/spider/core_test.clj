@@ -15,6 +15,11 @@
          (spider/parse-media-type
            "application/x-www-form-urlencoded; charset=UTF-8"))))
 
+(deftest test-strip-params
+  (is (= "application/x-www-form-urlencoded"
+         (spider/strip-params
+           "application/x-www-form-urlencoded; charset=UTF-8"))))
+
 (deftest test-accept-dispatcher
   (let [dispatcher
         (spider/accept-dispatcher {"text/html" (constantly :html)}

@@ -6,11 +6,11 @@
               [http :as http]
               [response :as response])))
 
-(def edn http/edn)
-(def json http/json)
-(def html http/html)
-(def plain http/plain)
-(def form-encoded http/form-encoded)
+(def edn "The EDN content-type string" http/edn)
+(def json "The JSON content-type string" http/json)
+(def html "The HTML content-type string" http/html)
+(def plain "The text/plain content-type string" http/plain)
+(def form-encoded "The form-urlencoded content-type string" http/form-encoded)
 
 (defn parse-media-type
   "See RFC 2616 section 3.7 Media Types
@@ -29,14 +29,21 @@
      :subtype subtype
      :parameter parameter}))
 
-(defn strip-params [media-type-str]
+(defn strip-params
+  "Return just the type/subtype of a media type string
+   See RFC 2616 section 3.7 Media Types
+
+   Ex:
+    (strip-params \"application/x-www-form-urlencoded; charset=UTF-8\")
+    ; => \"application/x-www-form-urlencoded\""
+  [media-type-str]
   (let [{:keys [type subtype]} (parse-media-type media-type-str)]
     (str type "/" subtype)))
 
-(defn find-match
+(defn- find-match
   "All content-type strings will be matched using just the type and subtype
-  parts. Other parameters will be ignored in both the `ct-map` and the
-  content-type header."
+   parts. Other parameters will be ignored in both the `ct-map` and the
+   content-type header."
   [ct-map content-type]
   (let [content-type' (strip-params content-type)]
     (some
@@ -48,10 +55,11 @@
   "Construct a handler function that will dispatch to one of several
    sub-handlers depending on the Accept header of the request
 
-  (def my-endpoint
-    (accept-dispatcher
-      {\"application/edn\" (fn [request] ...)}
-      my-not-acceptable-handler))"
+   Ex:
+     (def my-endpoint
+       (accept-dispatcher
+         {\"application/edn\" (fn [request] ...)}
+         my-not-acceptable-handler))"
   [ct-map default-handler]
   (fn [request]
     (let [primary-accept
