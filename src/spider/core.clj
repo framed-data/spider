@@ -46,10 +46,9 @@
    content-type header."
   [ct-map content-type]
   (let [content-type' (strip-params content-type)]
-    (some
-      (fn [[ct handler]]
-        (when (= content-type' (strip-params ct)) handler))
-      ct-map)))
+    (some (fn [[ct handler]]
+            (when (= content-type' (strip-params ct)) handler))
+          ct-map)))
 
 (defn accept-dispatcher
   "Construct a handler function that will dispatch to one of several
@@ -111,7 +110,7 @@
          {:get my-get-handler
           :post my-post-handler}))"
   [method-handler-map]
-  (fn [request]
-    (if-let [handler (-> request :request-method method-handler-map)]
+  (fn [{:keys [request-method] :as request}]
+    (if-let [handler (get method-handler-map request-method)]
       (handler request)
       (response/not-allowed))))
