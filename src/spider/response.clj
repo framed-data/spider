@@ -1,6 +1,6 @@
 (ns spider.response
   "Utilities for constructing Ring responses"
-  (:require [clj-json.core :as clj-json]
+  (:require [clj-json.core :as json]
             [spider.http :as http]))
 
 (defn edn
@@ -19,7 +19,7 @@
   ([status body]
    {:status status
     :headers {"Content-Type" http/json}
-    :body (clj-json/generate-string body)}))
+    :body (json/generate-string body)}))
 
 (defn html
   "Construct a response map with an HTML content-type"
@@ -35,7 +35,7 @@
 (defn ^:no-doc render-body [content-type body]
   (condp = content-type
     http/edn (pr-str body)
-    http/json (clj-json/generate-string body)
+    http/json (json/generate-string body)
     body))
 
 (defmacro ^:no-doc defresponse [resp-name status default-body]
